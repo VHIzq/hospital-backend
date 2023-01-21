@@ -1,21 +1,42 @@
-  //? /api/usuarios
-  
-  const { Router } = require('express');
-  const { check } = require('express-validator');
+//? /api/usuarios
 
-  const { validarCampos } = require('../middlewares/validar-campos');
+const { Router } = require('express');
+const { check } = require('express-validator');
 
-  const { getUsuarios } = require('../controllers/usuarios');
-  const { crearUsuarios } = require('../controllers/usuarios');
+const { validarCampos } = require('../middlewares/validar-campos');
+const {
+  getUsuarios,
+  crearUsuario,
+  actualizarUsuario,
+  borrarUsuario,
+} = require('../controllers/usuarios');
 
-  const router = Router();
+const router = Router();
 
-  router.get('/', getUsuarios);
+router.get('/', getUsuarios);
 
-  router.post('/', [
+router.post(
+  '/',
+  [
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
     check('password', 'El password es obligatorio').not().isEmpty(),
     check('email', 'El email es obligatorio').isEmail(),
-  ] ,crearUsuarios) 
+    validarCampos
+  ],
+  crearUsuario
+);
 
-  module.exports = router; 
+router.put(
+  '/:id',
+  [
+    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+    check('email', 'El email es obligatorio').isEmail(),
+    check('role', 'El role es obligatorio'),
+    validarCampos
+  ],
+  actualizarUsuario
+);
+
+router.delete('/:id', borrarUsuario);
+
+module.exports = router;
